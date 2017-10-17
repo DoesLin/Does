@@ -1,0 +1,18 @@
+class Solution {
+public:
+    int findShortestSubArray(vector<int>& nums) {
+        int i,degree=1,minlen=nums.size();
+        unordered_map<int,vector<int>> maplen;
+        for(i=0;i<nums.size();i++){
+            maplen[nums[i]].push_back(i);
+            degree=degree>maplen[nums[i]].size()?degree:maplen[nums[i]].size();
+        }
+        for(auto map: maplen){
+            vector<int> pos = map.second;
+            if(pos.size()==degree){
+                minlen=minlen<pos[pos.size()-1]-pos[0]+1?minlen:pos[pos.size()-1]-pos[0]+1;
+            }
+        }
+        return minlen;
+    }
+};
