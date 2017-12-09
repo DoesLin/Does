@@ -1,0 +1,98 @@
+class Solution {
+public:
+    int maximumProduct(vector<int>& nums) {
+        std::vector<int> vIdx, vRes, vResMin, vIdxMin;
+        int cpt;
+
+        vRes.push_back(nums[0]);
+        vIdx.push_back(0);
+        for(cpt=0; cpt<nums.size(); cpt++){
+            if(cpt==vIdx[0]) continue;
+            vRes.push_back(nums[cpt]);
+            if(vRes[0]<vRes[1]){
+                vIdx.pop_back();
+                vRes[0]=vRes[1];
+                vIdx.push_back(cpt);
+            }
+            vRes.pop_back();
+        }
+        //cout << vRes[0] << endl;
+
+        vResMin.push_back(nums[0]);
+        vIdxMin.push_back(0);
+        for(cpt=0; cpt<nums.size(); cpt++){
+            if(cpt==vIdxMin[0]) continue;
+            vResMin.push_back(nums[cpt]);
+            if(vResMin[0]>vResMin[1]){
+                vIdxMin.pop_back();
+                vResMin[0]=vResMin[1];
+                vIdxMin.push_back(cpt);
+            }
+            vResMin.pop_back();
+        }
+        //cout << vResMin[0] << endl;
+
+        cpt=0; while(cpt==vIdx[0]) cpt++;
+        vRes.push_back(vRes[0]*nums[cpt]);
+        vIdx.push_back(cpt);
+        for(cpt=0; cpt<nums.size(); cpt++){
+            if(cpt==vIdx[0]||cpt==vIdx[1]) continue;
+            vRes.push_back(vRes[0]*nums[cpt]);
+            if(vRes[1]<vRes[2]){
+                vIdx.pop_back();
+                vRes[1]=vRes[2];
+                vIdx.push_back(cpt);
+            }
+            vRes.pop_back();
+        }
+        //cout << vRes[1] << endl;
+
+        cpt=0; while(cpt==vIdxMin[0]) cpt++;
+        vResMin.push_back(vResMin[0]*nums[cpt]);
+        vIdxMin.push_back(cpt);
+        for(cpt=0; cpt<nums.size(); cpt++){
+            if(cpt==vIdxMin[0]||cpt==vIdxMin[1]) continue;
+            vResMin.push_back(vResMin[0]*nums[cpt]);
+            if(vResMin[1]>vResMin[2]){
+                vIdxMin.pop_back();
+                vResMin[1]=vResMin[2];
+                vIdxMin.push_back(cpt);
+            }
+            vResMin.pop_back();
+        }
+        //cout << vResMin[1] << endl;
+
+
+        cpt=0; while(cpt==vIdx[0]||cpt==vIdx[1]) cpt++;
+        vRes.push_back(vRes[1]*nums[cpt]);
+        vIdx.push_back(cpt);
+        for(cpt=0; cpt<nums.size(); cpt++){
+            if(cpt==vIdx[0]||cpt==vIdx[1]||cpt==vIdx[2]) continue;
+            vRes.push_back(vRes[1]*nums[cpt]);
+            if(vRes[2]<vRes[3]){
+                vIdx.pop_back();
+                vRes[2]=vRes[3];
+                vIdx.push_back(cpt);
+            }
+            vRes.pop_back();
+        }
+        //cout << vRes[2] << endl;
+
+        cpt=0; while(cpt==vIdxMin[0]||cpt==vIdxMin[1]) cpt++;
+        vResMin.push_back(vResMin[1]*nums[cpt]);
+        vIdxMin.push_back(cpt);
+        for(cpt=0; cpt<nums.size(); cpt++){
+            if(cpt==vIdxMin[0]||cpt==vIdxMin[1]||cpt==vIdxMin[2]) continue;
+            vResMin.push_back(vResMin[1]*nums[cpt]);
+            if(vResMin[2]<vResMin[3]){
+                vIdxMin.pop_back();
+                vResMin[2]=vResMin[3];
+                vIdxMin.push_back(cpt);
+            }
+            vResMin.pop_back();
+        }
+        //cout << vResMin[2] << endl;
+
+        return (vRes[2]>vResMin[2]? vRes[2]:vResMin[2]);
+    }
+};
