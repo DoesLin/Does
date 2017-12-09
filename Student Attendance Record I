@@ -1,0 +1,25 @@
+class Solution {
+public:
+    bool checkRecord(string s) {
+        int nbrA=0, nbrL=0, cpt;
+        bool signSuss1=false, signSuss2=false, signSuss3=false;
+        for(cpt=0; cpt<s.size(); cpt++){
+            if(s[cpt]=='L'){
+                signSuss3=(signSuss2);
+                signSuss2=(signSuss1);
+                signSuss1=true;
+                if(signSuss3){
+                    return false;
+                }
+            }else{
+                if(s[cpt]=='A'){
+                    nbrA++;
+                }
+                signSuss1=false;
+                signSuss2=false;
+                signSuss3=false;
+            }
+        }
+        return (nbrA<=1);
+    }
+};
