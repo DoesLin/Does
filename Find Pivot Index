@@ -1,0 +1,24 @@
+class Solution {
+public:
+    int pivotIndex(vector<int>& nums) {
+        int cptIdx, cptSumG=0, cptSumD=nums.size()-1, idx=-1;
+        int sumG=0, sumD=0;
+        for(cptIdx=0; cptIdx<nums.size(); cptIdx++){
+            idx=cptIdx;
+            while(cptSumG<idx){
+                sumG+=nums[cptSumG++];
+            }
+            while(cptSumD>idx){
+                sumD+=nums[cptSumD--];
+            }
+            if(sumG==sumD){
+                break;
+            }
+            sumG=0; sumD=0;
+            cptSumG=0; cptSumD=nums.size()-1;
+            idx=-1;
+        }
+
+        return idx;
+    }
+};
