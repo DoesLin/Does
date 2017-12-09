@@ -1,0 +1,26 @@
+class Solution {
+public:
+    bool areSentencesSimilar(vector<string>& words1, vector<string>& words2, vector<pair<string, string>> pairs) {
+        bool res;
+        unsigned int cpt=0, cptPairs;
+        pair<string, string> curPair1, curPair2;
+        res=(words1.size()==words2.size());
+        while(res&&cpt<words1.size()){
+            if(0==words1[cpt].compare(words2[cpt])){
+                cpt++;
+                continue;
+            }else{
+                cptPairs=0;
+                curPair1={words1[cpt], words2[cpt]};
+                curPair2={words2[cpt], words1[cpt]};
+                while(cptPairs<pairs.size()&&curPair1!=pairs[cptPairs]&&curPair2!=pairs[cptPairs])
+                    {cptPairs++;}
+                if(cptPairs==pairs.size())
+                    {res=false;}
+                cpt++;
+            }
+        }
+
+        return res;
+    }
+};
