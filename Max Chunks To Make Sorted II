@@ -1,0 +1,19 @@
+class Solution {
+private:
+    bool isNumChunk(vector<int> arr, int numChunk) {
+        return true;
+    }
+    
+    
+public:
+    int maxChunksToSorted(vector<int>& arr) {
+        int numChunk = arr.size();
+        
+        // std::sort (myvector.begin(), myvector.begin()+4);
+        // std::merge (first,first+5,second,second+5,v.begin());
+        
+        while (!isNumChunk(arr, --numChunk));
+        
+        return numChunk;
+    }
+};
