@@ -1,0 +1,120 @@
+class Solution {
+private:
+    // N
+    vector<int> sortNums(vector<vector<int>> nums) {
+        vector<int> result;
+        for (int i = 0; i < nums.size(); i++) {
+            result.insert(result.end(), nums[i].begin(), nums[i].end());
+        }
+        sort(result.begin(), result.end());
+        return result;
+    }
+    
+    // N^2
+    // 0 - left
+    // 1 - right
+    bool isNextInclude(vector<int> range, vector<vector<int>> nums, int direction, vector<int> sortedNums) {
+        if ((range[1] - range[0]) > 1) {
+            vector<int> curRange;
+            if (direction == 0) {
+                // Left
+                curRange.push_back(range[0] + 1);
+                curRange.push_back(range[1]);
+            } else {
+                // Right
+                curRange.push_back(range[0]);
+                curRange.push_back(range[1] - 1);
+            }
+            
+            for (int i = 0; i < nums.size(); i++) {
+                if (!isNumInclude(curRange, nums[i], sortedNums)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    // N
+    bool isNumInclude(vector<int> range, vector<int> num, vector<int> sortedNums) {
+        vector<int> numRange;
+        numRange.push_back(sortedNums[range[0]]);
+        numRange.push_back(sortedNums[range[1]]);
+        
+        bool result = false;
+        int i = 0;
+        while (i < num.size() && !result) {
+            result = (num[i] >= numRange[0] && num[i] <= numRange[1]);
+            i++;
+        }
+        
+        return result;
+    }
+    
+    // C
+    vector<int> pickSmallerRanger(vector<int> leftRange, vector<int> rightRange, vector<int> sortedNums) {
+        vector<int> range1;
+        vector<int> range2;
+        
+        range1.push_back(sortedNums[leftRange[0]]);
+        range1.push_back(sortedNums[leftRange[1]]);
+        
+        range2.push_back(sortedNums[rightRange[0]]);
+        range2.push_back(sortedNums[rightRange[1]]);
+        
+        // We define the range [a,b] is smaller than range [c,d] if b-a < d-c or a < c if b-a == d-c.
+        if (((range1[1] - range1[0]) < (range2[1] - range2[0])) || 
+            ((range1[0] < range2[0]) && ((range1[1] - range1[0]) == (range2[1] - range2[0])))) {
+            return leftRange;
+        } else {
+            return rightRange;
+        }
+        
+    }
+    
+    // 2^N
+    vector<int> smallerRange(vector<int> range, vector<vector<int>> nums, vector<int> sortedNums) {
+        vector<int> leftRange = range;
+        vector<int> rightRange = range;
+        
+        // Left
+        if (isNextInclude(range, nums, 0, sortedNums)) {
+            leftRange.clear();
+            leftRange.push_back(range[0] + 1);
+            leftRange.push_back(range[1]);
+            
+            leftRange = smallerRange(leftRange, nums, sortedNums);
+        }
+        // Right
+        if (isNextInclude(range, nums, 1, sortedNums)) {
+            rightRange.clear();
+            rightRange.push_back(range[0]);
+            rightRange.push_back(range[1] - 1);
+            
+            rightRange = smallerRange(rightRange, nums, sortedNums);
+        }
+        
+        return pickSmallerRanger(leftRange, rightRange, sortedNums);
+        
+    }
+    
+public:
+    // N + 2^N*(C+N)
+    vector<int> smallestRange(vector<vector<int>>& nums) {
+        vector<int> sortedNums = sortNums(nums);
+        
+        vector<int> smallestRangeNum;
+        smallestRangeNum.push_back(0);
+        smallestRangeNum.push_back(sortedNums.size() - 1);
+        
+        smallestRangeNum = smallerRange(smallestRangeNum, nums, sortedNums);
+        
+        vector<int> smallestRange;
+        smallestRange.push_back(sortedNums[smallestRangeNum[0]]);
+        smallestRange.push_back(sortedNums[smallestRangeNum[1]]);
+        
+        return smallestRange;
+    }
+};
