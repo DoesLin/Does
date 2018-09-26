@@ -1,6 +1,8 @@
 class Solution {
 private:
     bool isNumChunk(vector<int> arr, int numChunk) {
+        int curNum = arr.size() - numChunk;
+    
         return true;
     }
     
