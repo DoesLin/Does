@@ -1,0 +1,69 @@
+/**
+ * // This is the Master's API interface.
+ * // You should not implement it, or speculate about its implementation
+ * interface Master {
+ *     public int guess(String word) {}
+ * }
+ */
+class Solution {
+    
+	private int compare(String a, String b) {
+		int count = 0;
+		a = a.toLowerCase();
+		for (int i = 0; i < 6; i++) {
+			if (a.charAt(i) == b.charAt(i)) {
+				count += 1;
+			}
+		}
+
+		return count;
+	}
+    
+   /*
+	 * 1. random guess one at first 2. we get the matched number and its letters
+	 * 3. we compare other words with this if the matched number is the same
+	 * then saved for a subset 4. random guess one in this subset 5. repeat
+	 */
+	public void findSecretWord(String[] wordlist, Master master) {
+
+		ArrayList<String> subset = new ArrayList<String>();
+		Random rnd = new Random();
+		int length = wordlist.length;
+		String guessWord = wordlist[rnd.nextInt(length - 1)];
+
+		while (true) {
+			int result = master.guess(guessWord);
+			if (result == -1) {
+				System.out.println("Error!");
+				return;
+			}
+			if (result == 6) {
+				// System.out.println("Correct!\tCall times: " + Master.calltimes);
+				return;
+			} else {
+				if (subset.isEmpty()) {
+					for (String word : wordlist) {
+						if (compare(word, guessWord) == result) {
+							subset.add(word);
+						}
+					}
+				} else {
+					ArrayList<String> tmpsubset = new ArrayList<String>();
+					for (String word : subset) {
+						if (compare(word, guessWord) == result) {
+							tmpsubset.add(word);
+						}
+					}
+					subset = tmpsubset;
+				}
+				length = subset.size();
+				if (length == 1) {
+					guessWord = subset.get(0);
+				} else {
+					guessWord = subset.get(rnd.nextInt(length - 1));
+				}
+			}
+		}
+
+	}
+}
