@@ -1,0 +1,37 @@
+#pragma once
+
+class Solution {
+public:
+	vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
+		vector<vector<int>> result;
+
+		vector<pair<int, int>> events;
+		multiset<int> heights;
+
+		for (auto building : buildings) {
+			events.emplace_back(make_pair(building[0], -building[2]));
+			events.emplace_back(make_pair(building[1], building[2]));
+		}
+		sort(events.begin(), events.end());
+		cout << "Sorted events" << endl;
+
+		heights.emplace(0);
+		int cur_height = 0, max_height = cur_height;
+		for (auto event : events) {
+			if (event.second < 0) {
+				heights.emplace(-event.second);
+			}
+			else {
+				heights.erase(heights.find(event.second));
+			}
+
+			cur_height = *heights.rbegin();
+			if (cur_height != max_height) {
+				result.emplace_back(vector<int>{event.first, cur_height});
+				max_height = cur_height;
+			}
+		}
+
+		return result;
+	}
+};
