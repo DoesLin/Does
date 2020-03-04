@@ -1,0 +1,38 @@
+package race.car;
+
+import java.util.*;
+
+public class Solution {
+
+	public static int racecar(int target) {
+
+		int[] solution = new int[target + 3];
+		Arrays.fill(solution, Integer.MAX_VALUE);
+
+		solution[0] = 0;
+		solution[1] = 1;
+		// 0 1 3 3 2
+		solution[2] = 4;
+
+		for (int position = 3; position <= target; position++) {
+			int ceil = (int) Math.ceil(Math.log(position + 1) / Math.log(2));
+			int floor = (int) Math.floor(Math.log(position + 1) / Math.log(2));
+			if (ceil == floor) {
+				solution[position] = floor;
+				continue;
+			}
+
+			for (int j = 0; j <= floor; j++) {
+				// to arrive position : (2^floor + R + 2^j + R) + (rest of position)
+				solution[position] = Math.min(solution[position],
+						solution[position - ((1 << floor) - (1 << j))] + floor + 1 + j + 1);
+			}
+			if ((1 << ceil) / 2 < position + 1) {
+				solution[position] = Math.min(solution[position],
+						solution[(1 << ceil) - 1 - position] + ceil + 1);
+			}
+		}
+
+		return solution[target];
+	}
+}
