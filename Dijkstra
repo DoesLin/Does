@@ -1,0 +1,107 @@
+package mydijkstra2;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
+
+/*
+ * 1. Mark all nodes unvisited. Create a set of all the unvisited nodes called the unvisited set.
+ * 
+ * 2. Assign to every node a tentative distance value: set it to zero for our initial node and to infinity 
+ * for all other nodes. Set the initial node as current.[13]
+ * 
+ * 3. For the current node, consider all of its unvisited neighbours and calculate their tentative distances 
+ * through the current node. Compare the newly calculated tentative distance to the current assigned value and 
+ * assign the smaller one. For example, if the current node A is marked with a distance of 6, and the edge 
+ * connecting it with a neighbour B has length 2, then the distance to B through A will be 6 + 2 = 8. 
+ * If B was previously marked with a distance greater than 8 then change it to 8. Otherwise, the current value 
+ * will be kept.
+ * 
+ * 4. When we are done considering all of the unvisited neighbours of the current node, mark the current node 
+ * as visited and remove it from the unvisited set. A visited node will never be checked again.
+ * 
+ * 5. If the destination node has been marked visited (when planning a route between two specific nodes) or if 
+ * the smallest tentative distance among the nodes in the unvisited set is infinity (when planning a complete 
+ * traversal; occurs when there is no connection between the initial node and remaining unvisited nodes), 
+ * then stop. The algorithm has finished.
+ * 
+ * 6. Otherwise, select the unvisited node that is marked with the smallest tentative distance, set it 
+ * as the new "current node", and go back to step 3.
+ */
+
+class Node {
+	public int node = 0;
+	// public Map<Integer, Integer> neighboursDist = new HashMap<Integer,
+	// Integer>();
+	public int distance = Integer.MAX_VALUE;
+
+	public Node(int node, int dist) {
+		this.node = node;
+		this.distance = dist;
+	}
+
+	public Node() {
+	}
+}
+
+public class MyDijkstra {
+
+	public static int solution(int[][] edges, int m, int n) {
+		Map<Integer, Map<Integer, Integer>> graph = new HashMap();
+		PriorityQueue<Node> unvisitedNode = new PriorityQueue<Node>((a, b) -> Integer.compare(a.distance, b.distance));
+		Map<Integer, Integer> nodeDistance = new HashMap();
+
+		Map<Integer, Integer> usedEdge = new HashMap<Integer, Integer>();
+		int nbReachable = 0;
+
+		for (int[] edge : edges) {
+			Map<Integer, Integer> neighbour1 = graph.getOrDefault(edge[0], new HashMap());
+			Map<Integer, Integer> neighbour2 = graph.getOrDefault(edge[1], new HashMap());
+
+			neighbour1.put(edge[1], edge[2]);
+			neighbour2.put(edge[0], edge[2]);
+
+			graph.put(edge[0], neighbour1);
+			graph.put(edge[1], neighbour2);
+		}
+		
+		unvisitedNode.add(new Node(0, 0));
+		nodeDistance.put(0, 0);
+		int curDist = 0, extraDist = 0, neighbourDist = 0;
+
+		while (!unvisitedNode.isEmpty()) {
+			Node curNode = unvisitedNode.poll();
+			
+			if (curNode.distance > nodeDistance.getOrDefault(curNode.node, Integer.MAX_VALUE))
+				continue;
+			nbReachable += 1;
+
+			if (!graph.containsKey(curNode.node))
+				continue;
+			for (int neighbour : graph.get(curNode.node).keySet()) {
+				neighbourDist = nodeDistance.getOrDefault(neighbour, Integer.MAX_VALUE);
+
+				curDist = curNode.distance + graph.get(curNode.node).get(neighbour) + 1;
+
+				extraDist = Math.min(m - curNode.distance, graph.get(curNode.node).get(neighbour));
+				usedEdge.put(n * curNode.node + neighbour, extraDist);
+
+				if (curDist < neighbourDist && curDist <= m) {
+					unvisitedNode.offer(new Node(neighbour, curDist));
+					nodeDistance.put(neighbour, curDist);
+				}
+			}
+		}
+
+		for (int[] edge : edges) {
+			nbReachable += Math.min(edge[2],
+					usedEdge.getOrDefault(n * edge[0] + edge[1], 0) + usedEdge.getOrDefault(n * edge[1] + edge[0], 0));
+		}
+
+		return nbReachable;
+	}
+}
