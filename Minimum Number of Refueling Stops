@@ -1,0 +1,65 @@
+
+class Solution {
+public:
+	int minRefuelStops(int target, int startFuel, vector<vector<int>>& stations) {
+		if (startFuel >= target)
+		{
+			return 0;
+		}
+		else if (stations.size() == 0)
+		{
+			return -1;
+		}
+
+		map<int, int> num_refuel_target;
+		set<vector<int>> unvisited_station = set<vector<int>>(stations.begin(), stations.end());
+		bool cant_arrived = false;
+		int num_refuel = 0;
+		num_refuel_target.insert(make_pair(num_refuel, startFuel));
+		int prev_refuel_target = startFuel;
+		auto prev_station = stations[0];
+
+		while (unvisited_station.size() != 0 && !cant_arrived)
+		{
+			cant_arrived = true;
+			num_refuel++;
+			for (auto station : stations)
+			{
+				if (unvisited_station.find(station) == unvisited_station.end())
+				{
+					continue;
+				}
+				auto it = num_refuel_target.find(num_refuel - 1);
+				if (it->second >= station[0])
+				{
+					cant_arrived = false;
+					auto cur_it = num_refuel_target.find(num_refuel);
+					if (cur_it == num_refuel_target.end())
+					{
+						num_refuel_target.insert(make_pair(num_refuel, it->second + station[1]));
+						unvisited_station.erase(station);
+						prev_station = station;
+					}
+					else
+					{
+						prev_refuel_target = cur_it->second;
+						cur_it->second = max(cur_it->second, it->second + station[1]);
+						if (prev_station[1] > station[1])
+						{
+							continue;
+						}
+						unvisited_station.insert(prev_station);
+						unvisited_station.erase(station);
+						prev_station = station;
+					}
+				}
+				if (num_refuel_target.rbegin()->second >= target)
+				{
+					return num_refuel_target.rbegin()->first;
+				}
+			}
+		}
+
+		return -1;
+	}
+};
