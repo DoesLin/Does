@@ -1,0 +1,17 @@
+# Write your MySQL query statement below
+
+# select d.Name as 'Department', e.Name as 'Employee', e.Salary as 'Salary'
+# from Employee e inner join Department d on e.DepartmentId = d.Id
+# where 0 = (
+#     select count(*)
+#     from Employee e2
+#     where e.Salary < e2.Salary and e.DepartmentId = e2.DepartmentId)
+# order by d.Id asc
+
+select d.Name as 'Department', e.Name as 'Employee', e.Salary as 'Salary'
+from Employee e join Department d on e.DepartmentId = d.Id
+where e.Salary = (
+    select max(e2.Salary)
+    from Employee e2
+    where e.DepartmentId = e2.DepartmentId)
+order by d.Id asc
